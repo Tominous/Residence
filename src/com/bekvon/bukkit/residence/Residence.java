@@ -127,7 +127,7 @@ import com.bekvon.bukkit.residence.utils.Sorting;
 import com.bekvon.bukkit.residence.utils.TabComplete;
 import com.bekvon.bukkit.residence.utils.YmlMaker;
 import com.bekvon.bukkit.residence.vaultinterface.ResidenceVaultAdapter;
-//import com.bekvon.bukkit.residence.towns.TownManager;
+ import com.bekvon.bukkit.residence.towns.TownManager;
 import com.earth2me.essentials.Essentials;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
@@ -186,7 +186,7 @@ public class Residence extends JavaPlugin {
     protected PlayerManager PlayerManager;
     protected FlagUtil FlagUtilManager;
     protected ShopSignUtil ShopSignUtilManager;
-//    private TownManager townManager;
+    private TownManager townManager;
     protected RandomTp RandomTpManager;
     protected DynMapManager DynManager;
     protected Sorting SortingManager;
@@ -226,7 +226,7 @@ public class Residence extends JavaPlugin {
     private WorldGuardPlugin wg = null;
     private CMIMaterial wepid;
 
-//    private String ServerLandname = "Server_Land";
+    private String ServerLandname = "Server_Land";
     private String ServerLandUUID = "00000000-0000-0000-0000-000000000000";
     private String TempUserUUID = "ffffffff-ffff-ffff-ffff-ffffffffffff";
 
@@ -423,18 +423,18 @@ public class Residence extends JavaPlugin {
 		Logger.getLogger("Minecraft").log(Level.SEVERE, "[Residence] SEVERE SAVE ERROR", ex);
 	    }
 
-//	    File file = new File(this.getDataFolder(), "uuids.yml");
-//	    YamlConfiguration conf = YamlConfiguration.loadConfiguration(file);
-//	    if (!conf.isConfigurationSection("UUIDS"))
-//		conf.createSection("UUIDS");
-//	    for (Entry<UUID, String> one : getCachedPlayerNameUUIDs().entrySet()) {
-//		conf.set("UUIDS." + one.getKey().toString(), one.getValue());
-//	    }
-//	    try {
-//		conf.save(file);
-//	    } catch (IOException e) {
-//		e.printStackTrace();
-//	    }
+	    File file = new File(this.getDataFolder(), "uuids.yml");
+	    YamlConfiguration conf = YamlConfiguration.loadConfiguration(file);
+	    if (!conf.isConfigurationSection("UUIDS"))
+		conf.createSection("UUIDS");
+	    for (Entry<UUID, String> one : getCachedPlayerNameUUIDs().entrySet()) {
+		conf.set("UUIDS." + one.getKey().toString(), one.getValue());
+	    }
+	    try {
+		conf.save(file);
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
 
 	    Bukkit.getConsoleSender().sendMessage(getPrefix() + " Disabled!");
 	}
@@ -488,13 +488,13 @@ public class Residence extends JavaPlugin {
 	    this.getCommand("resadmin").setTabCompleter(tab);
 	    this.getCommand("residence").setTabCompleter(tab);
 
-//	    Residence.getConfigManager().UpdateConfigFile();
+	    Residence.getConfigManager().UpdateConfigFile();
 
-//	    if (this.getConfig().getInt("ResidenceVersion", 0) == 0) {
-//		this.writeDefaultConfigFromJar();
-//		this.getConfig().load("config.yml");
-//		System.out.println("[Residence] Config Invalid, wrote default...");
-//	    }
+	    if (this.getConfig().getInt("ResidenceVersion", 0) == 0) {
+		this.writeDefaultConfigFromJar();
+		this.getConfig().load("config.yml");
+		System.out.println("[Residence] Config Invalid, wrote default...");
+	    }
 
 	    cmanager = new ConfigManager(this);
 	    String multiworld = cmanager.getMultiworldPlugin();
@@ -555,7 +555,7 @@ public class Residence extends JavaPlugin {
 	    PlayerManager = new PlayerManager(this);
 	    ShopSignUtilManager = new ShopSignUtil(this);
 	    RandomTpManager = new RandomTp(this);
-//	    townManager = new TownManager(this);
+	    townManager = new TownManager(this);
 
 	    InformationPagerManager = new InformationPager(this);
 
@@ -760,7 +760,7 @@ public class Residence extends JavaPlugin {
 		plistener = new ResidencePlayerListener(this);
 		elistener = new ResidenceEntityListener(this);
 		flistener = new ResidenceFixesListener();
-//		slistener = new ResidenceSiegeListener();
+		slistener = new ResidenceSiegeListener();
 
 		shlistener = new ShopListener(this);
 		spigotlistener = new SpigotListener();
@@ -771,7 +771,7 @@ public class Residence extends JavaPlugin {
 		pm.registerEvents(elistener, this);
 		pm.registerEvents(flistener, this);
 		pm.registerEvents(shlistener, this);
-//		pm.registerEvents(slistener, this);
+		pm.registerEvents(slistener, this);
 
 		// 1.8 event
 		if (Version.isCurrentEqualOrHigher(Version.v1_8_R1))
@@ -1436,17 +1436,17 @@ public class Residence extends JavaPlugin {
 	    if (loadFile.isFile()) {
 		yml = new YMLSaveHelper(loadFile);
 		yml.load();
-//		rentmanager = new RentManager();
+		rentmanager = new RentManager();
 		rentmanager.load((Map) yml.getRoot().get("RentSystem"));
 	    }
 
-//	    for (Player one : Bukkit.getOnlinePlayers()) {
-//		ResidencePlayer rplayer = getPlayerManager().getResidencePlayer(one);
-//		if (rplayer != null)
-//		    rplayer.recountRes();
-//	    }
+	    for (Player one : Bukkit.getOnlinePlayers()) {
+		ResidencePlayer rplayer = getPlayerManager().getResidencePlayer(one);
+		if (rplayer != null)
+		    rplayer.recountRes();
+	    }
 
-	    // System.out.print("[Residence] Loaded...");
+	     System.out.print("[Residence] Loaded...");
 	    return true;
 	} catch (Exception ex) {
 	    Logger.getLogger(Residence.class.getName()).log(Level.SEVERE, null, ex);
@@ -1610,37 +1610,37 @@ public class Residence extends JavaPlugin {
 	out.close();
     }
 
-//    private void writeDefaultLanguageFile(String lang) {
-//	File outFile = new File(new File(this.getDataFolder(), "Language"), lang + ".yml");
-//	outFile.getParentFile().mkdirs();
-//	if (this.writeDefaultFileFromJar(outFile, "languagefiles/" + lang + ".yml", true)) {
-//	    System.out.println("[Residence] Wrote default " + lang + " Language file...");
-//	}
-//    }
-//
-//    private boolean checkNewLanguageVersion(String lang) throws IOException, FileNotFoundException, InvalidConfigurationException {
-//	File outFile = new File(new File(this.getDataFolder(), "Language"), lang + ".yml");
-//	File checkFile = new File(new File(this.getDataFolder(), "Language"), "temp-" + lang + ".yml");
-//	if (outFile.isFile()) {
-//	    FileConfiguration testconfig = new YamlConfiguration();
-//	    testconfig.load(outFile);
-//	    int oldversion = testconfig.getInt("FieldsVersion", 0);
-//	    if (!this.writeDefaultFileFromJar(checkFile, "languagefiles/" + lang + ".yml", false)) {
-//		return false;
-//	    }
-//	    FileConfiguration testconfig2 = new YamlConfiguration();
-//	    testconfig2.load(checkFile);
-//	    int newversion = testconfig2.getInt("FieldsVersion", oldversion);
-//	    if (checkFile.isFile()) {
-//		checkFile.delete();
-//	    }
-//	    if (newversion > oldversion) {
-//		return true;
-//	    }
-//	    return false;
-//	}
-//	return true;
-//    }
+    private void writeDefaultLanguageFile(String lang) {
+	File outFile = new File(new File(this.getDataFolder(), "Language"), lang + ".yml");
+	outFile.getParentFile().mkdirs();
+	if (this.writeDefaultFileFromJar(outFile, "languagefiles/" + lang + ".yml", true)) {
+	    System.out.println("[Residence] Wrote default " + lang + " Language file...");
+	}
+    }
+
+    private boolean checkNewLanguageVersion(String lang) throws IOException, FileNotFoundException, InvalidConfigurationException {
+	File outFile = new File(new File(this.getDataFolder(), "Language"), lang + ".yml");
+	File checkFile = new File(new File(this.getDataFolder(), "Language"), "temp-" + lang + ".yml");
+	if (outFile.isFile()) {
+	    FileConfiguration testconfig = new YamlConfiguration();
+	    testconfig.load(outFile);
+	    int oldversion = testconfig.getInt("FieldsVersion", 0);
+	    if (!this.writeDefaultFileFromJar(checkFile, "languagefiles/" + lang + ".yml", false)) {
+		return false;
+	    }
+	    FileConfiguration testconfig2 = new YamlConfiguration();
+	    testconfig2.load(checkFile);
+	    int newversion = testconfig2.getInt("FieldsVersion", oldversion);
+	    if (checkFile.isFile()) {
+		checkFile.delete();
+	    }
+	    if (newversion > oldversion) {
+		return true;
+	    }
+	    return false;
+	}
+	return true;
+    }
 
     private boolean writeDefaultFileFromJar(File writeName, String jarPath, boolean backupOld) {
 	try {
@@ -1699,8 +1699,8 @@ public class Residence extends JavaPlugin {
     }
 
     public UUID getPlayerUUID(String playername) {
-//	if (Residence.getConfigManager().isOfflineMode())
-//	    return null;
+	if (Residence.getConfigManager().isOfflineMode())
+	    return null;
 	Player p = getServ().getPlayer(playername);
 	if (p == null) {
 	    OfflinePlayer po = OfflinePlayerList.get(playername.toLowerCase());
@@ -1722,9 +1722,9 @@ public class Residence extends JavaPlugin {
 	if (player != null)
 	    return player;
 
-//	offPlayer = Bukkit.getOfflinePlayer(Name);
-//	if (offPlayer != null)
-//	    addOfflinePlayerToChache(offPlayer);
+	offPlayer = Bukkit.getOfflinePlayer(Name);
+	if (offPlayer != null)
+	    addOfflinePlayerToChache(offPlayer);
 	return offPlayer;
     }
 
@@ -1744,9 +1744,9 @@ public class Residence extends JavaPlugin {
 	if (player != null)
 	    return player;
 
-//	offPlayer = Bukkit.getOfflinePlayer(uuid);
-//	if (offPlayer != null)
-//	    addOfflinePlayerToChache(offPlayer);
+	offPlayer = Bukkit.getOfflinePlayer(uuid);
+	if (offPlayer != null)
+	    addOfflinePlayerToChache(offPlayer);
 	return offPlayer;
     }
 
@@ -1813,13 +1813,13 @@ public class Residence extends JavaPlugin {
 	return false;
     }
 
-//    public static void msg(Player player, String path, Object... variables) {
-//	if (player != null)
-//	    if (Residence.getLM().containsKey(path))
-//		player.sendMessage(Residence.getLM().getMessage(path, variables));
-//	    else
-//		player.sendMessage(path);
-//    }
+    public static void msg(Player player, String path, Object... variables) {
+	if (player != null)
+	    if (Residence.getLM().containsKey(path))
+		player.sendMessage(Residence.getLM().getMessage(path, variables));
+	    else
+		player.sendMessage(path);
+    }
 
     public String msg(String path) {
 	return getLM().getMessage(path);
@@ -1835,29 +1835,29 @@ public class Residence extends JavaPlugin {
 	    player.sendMessage(ChatColor.translateAlternateColorCodes('&', text));
     }
 
-//    private boolean isWorldOk(CommandSender sender) {
-//	if (!this.getConfigManager().DisableNoFlagMessageUse)
-//	    return true;
-//
-//	if (sender.hasPermission("residence.checkbadflags"))
-//	    return true;
-//	
-//	if (!(sender instanceof Player))
-//	    return true;
-//
-//	Player player = (Player) sender;
-//	String world = player.getWorld().getName();
-//	
-//	for (String one : this.getConfigManager().DisableNoFlagMessageWorlds) {
-//	    if (one.equalsIgnoreCase(world))
-//		return false;
-//	}
-//	return true;
-//    }
+    private boolean isWorldOk(CommandSender sender) {
+	if (!this.getConfigManager().DisableNoFlagMessageUse)
+	    return true;
+
+	if (sender.hasPermission("residence.checkbadflags"))
+	    return true;
+	
+	if (!(sender instanceof Player))
+	    return true;
+
+	Player player = (Player) sender;
+	String world = player.getWorld().getName();
+	
+	for (String one : this.getConfigManager().DisableNoFlagMessageWorlds) {
+	    if (one.equalsIgnoreCase(world))
+		return false;
+	}
+	return true;
+    }
 
     public void msg(CommandSender sender, lm lm, Object... variables) {
-//	if (!isWorldOk(sender))
-//	    return;
+	if (!isWorldOk(sender))
+	    return;
 
 	if (sender == null)
 	    return;
@@ -1975,9 +1975,9 @@ public class Residence extends JavaPlugin {
 	    return new String[0];
 	return Arrays.copyOfRange(args, 1, args.length);
     }
-//    public TownManager getTownManager() {
-//	return townManager;
-//    }
+    public TownManager getTownManager() {
+	return townManager;
+    }
 
     public int getWorldGuardVersion() {
 	return wepVersion;
